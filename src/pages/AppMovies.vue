@@ -74,8 +74,12 @@ export default {
       })
     }
   },
-  created() {
-    this.getAllMovies()
+  beforeRouteEnter(to, from, next) {
+    Movies.index().then(({ data }) => {
+      next(context => {
+        context.movies = data
+      })
+    })
   }
 }
 </script>
