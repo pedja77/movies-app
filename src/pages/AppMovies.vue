@@ -8,6 +8,10 @@
           <div>
             <p>Movies selected: {{ numberOfSelectedMovies }}</p>
           </div>
+          <div>
+            <b-button variant="primary" @click="selectAllMovies">Select all</b-button>
+            <b-button variant="primary" @click="deselectAllMovies">Deselect all</b-button>
+          </div>
           <div v-if="isSearchResultEmpty">
             <p>No movies foud.</p>
           </div>
@@ -108,6 +112,12 @@ export default {
     onMovieDeselected(id) {
       this.selectedMoviesIds.splice(this.selectedMoviesIds.indexOf(id), 1)
       console.log(this.selectedMoviesIds)
+    },
+    selectAllMovies() {
+      this.selectedMoviesIds = this.filteredMovies.map(movie => movie.id)
+    },
+    deselectAllMovies() {
+      this.selectedMoviesIds = []
     }
   },
   beforeRouteEnter(to, from, next) {
