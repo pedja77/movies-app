@@ -5,6 +5,9 @@
         <div>
           <h3>List of movies</h3>
           <movie-search @search-term-updated="onSearchTermUpdate" />
+          <div v-if="isSearchResultEmpty">
+            <p>No movies foud.</p>
+          </div>
           <div v-for="movie in filteredMovies" :key="movie.id">
             <b-card :title="movie.title" :img-src="movie.imageUrl" img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
               <p class="card-text">
@@ -112,6 +115,11 @@ export default {
         context.filteredMovies = context.movies
       })
     })
+  },
+  computed: {
+    isSearchResultEmpty() {
+      return !this.filteredMovies.length
+    }
   }
 }
 </script>
