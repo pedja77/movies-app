@@ -1,10 +1,11 @@
 <template>
   <div class="container mt-4">
+   <h2> {{ magicNumber }} </h2>
     <b-row>
       <b-col cols="8">
         <div>
           <h3>List of movies</h3>
-          <movie-search @search-term-updated="onSearchTermUpdate" />
+          
           <div>
             <p>Movies selected: {{ numberOfSelectedMovies }}</p>
           </div>
@@ -71,6 +72,8 @@ import MovieRow from "../components/MovieRow"
 import MovieSearch from "../components/MovieSearch"
 import MoviesPaginator from '../components/MoviesPaginator'
 
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 export default {
   name: "AppMovies",
   components: {
@@ -80,7 +83,7 @@ export default {
   },
   data() {
     return {
-      movies: [],
+      //movies: [],
       filteredMovies: [],
       selectedMoviesIds: [],
       selectedPage: 1,
@@ -91,8 +94,19 @@ export default {
         duration: "",
         releaseDate: "",
         genre: ""
-      }
+      },
+      intervalId: null
     }
+  },
+  mounted() {
+    // this.intervalId = setInterval(() => {
+    //   this.incrementCounter()
+    // }, 1000) 
+    this.incrementCounterAction
+    this.fetchMovies()
+  },
+  destroyed() {
+    clearInterval(this.intervalId)
   },
   methods: {
     getAllMovies() {
@@ -107,9 +121,9 @@ export default {
         this.getAllMovies()
       })
     },
-    onSearchTermUpdate(searchTerm) {
+    onSearchTermUpdate(currentTerm) {
       // Uraditi kao computed***************
-      if (searchTerm) {
+      if (currentTerm) {
         this.filteredMovies = this.movies.filter(
           movie =>
             movie.title.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
@@ -165,17 +179,29 @@ export default {
     },
     onSelectedPage() {
 
-    }
+    },
+    ...mapMutations(['incrementCounter']),
+    ...mapActions(['incrementConterAction', 'fetchMovies'])
   },
-  beforeRouteEnter(to, from, next) {
-    Movies.index().then(({ data }) => {
-      next(context => {
-        context.movies = data
-        context.filteredMovies = context.movies
-      })
-    })
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   // Movies.index().then(({ data }) => {
+  //   //   next(context => {
+  //   //     context.movies = data
+  //   //     context.filteredMovies = context.movies
+  //   //   })
+  //   // })
+  //   //this.fetchMovies()
+  // },
   computed: {
+    // magicNumber() {
+    //   console.log(this.$store.getters)
+    //   return this.$store.getters.getCounter
+    // },
+    ...mapGetters({
+      magicNumber: 'getCounter',
+      currentTerm: 'getSearchTerm',
+      movies: 'getMovies'
+      }),
     isSearchResultEmpty() {
       return !this.filteredMovies.length
     },

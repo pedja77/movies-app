@@ -14,6 +14,7 @@
         <b-nav-item>
           <router-link :to="{name: 'movies'}">Movies</router-link>
         </b-nav-item>
+        <movie-search @search-term-updated="setSearchTerm" />
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
@@ -47,7 +48,18 @@
 </template>
 
 <script>
-export default {}
+import MovieSearch from './MovieSearch'
+import { mapMutations } from 'vuex'
+
+export default {
+  name: 'NavBar',
+  components: {
+    MovieSearch
+  },
+  methods: {
+    ...mapMutations(['setSearchTerm'])
+  }
+}
 </script>
 
 <style>
