@@ -4,7 +4,8 @@
       <b-col cols="8">
         <div>
           <h3>List of movies</h3>
-          <div v-for="movie in movies" :key="movie.id">
+          <movie-search @search-term-updated="onSearchTermUpdate" />
+          <div v-for="movie in filteredMovies" :key="movie.id">
             <b-card :title="movie.title" :img-src="movie.imageUrl" img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
               <p class="card-text">
                 <ul>
@@ -58,15 +59,18 @@
 <script>
 import Movies from "../services/Movies"
 import MovieRow from "../components/MovieRow"
+import MovieSearch from "../components/MovieSearch"
 
 export default {
   name: "AppMovies",
   components: {
-    MovieRow
+    MovieRow,
+    MovieSearch
   },
   data() {
     return {
       movies: [],
+      filteredMovies: [],
       movieForm: {
         title: "",
         director: "",
@@ -81,18 +85,31 @@ export default {
     getAllMovies() {
       Movies.index().then(({ data }) => {
         this.movies = data
+        this.filteredMovies = this.movies
       })
     },
     storeMovie() {
       Movies.store(this.movieForm).then(response => {
-        console.log(response.statusText)
+        Object.keys(this.movieForm).forEach(key => (this.movieForm[key] = ""))
+        this.getAllMovies()
       })
+    },
+    onSearchTermUpdate(searchTerm) {
+      if (searchTerm) {
+        this.filteredMovies = this.movies.filter(
+          movie =>
+            movie.title.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
+        )
+        return
+      }
+      this.filteredMovies = this.movies
     }
   },
   beforeRouteEnter(to, from, next) {
     Movies.index().then(({ data }) => {
       next(context => {
         context.movies = data
+        context.filteredMovies = context.movies
       })
     })
   }
