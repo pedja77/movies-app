@@ -12,7 +12,7 @@
       </b-navbar-brand>
       <b-navbar-nav>
         <b-nav-item>
-          <router-link to="{name: 'movies'}">Movies</router-link>
+          <router-link :to="{name: 'movies'}">Movies</router-link>
         </b-nav-item>
       </b-navbar-nav>
 
