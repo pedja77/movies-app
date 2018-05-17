@@ -25,6 +25,7 @@
             <div v-for="movie in filteredMovies" :key="movie.id">
               <movie-row :movie="movie" @movie-selected="onMovieSelected" :selected-movies-ids="selectedMoviesIds" @movie-deselected="onMovieDeselected" />
             </div>
+            <movies-paginator :pages="pages" @selected-page="onSelectedPage" v-if="pages > 1"/>
           </div>
         </div>
       </b-col>
@@ -68,18 +69,21 @@
 import Movies from "../services/Movies"
 import MovieRow from "../components/MovieRow"
 import MovieSearch from "../components/MovieSearch"
+import MoviesPaginator from '../components/MoviesPaginator'
 
 export default {
   name: "AppMovies",
   components: {
     MovieRow,
-    MovieSearch
+    MovieSearch,
+    MoviesPaginator
   },
   data() {
     return {
       movies: [],
       filteredMovies: [],
       selectedMoviesIds: [],
+      selectedPage: 1,
       movieForm: {
         title: "",
         director: "",
@@ -104,6 +108,7 @@ export default {
       })
     },
     onSearchTermUpdate(searchTerm) {
+      // Uraditi kao computed***************
       if (searchTerm) {
         this.filteredMovies = this.movies.filter(
           movie =>
@@ -157,6 +162,9 @@ export default {
           })
         }
       }
+    },
+    onSelectedPage() {
+
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -173,6 +181,16 @@ export default {
     },
     numberOfSelectedMovies() {
       return this.selectedMoviesIds.length
+    },
+    pages() {
+      return Math.ceil(this.filteredMovies.length / 5)
+    },
+    currentlyVisibleMovies() {
+      let bottomLimit = (this.selectedPage -1) * 5
+      let topLimit = bottomLimit + 5 
+      return this.filteredMovies.filter((movie, index) => {
+        return index >= bottomLimit && index < topLimit
+      })
     }
   }
 }
