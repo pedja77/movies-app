@@ -4,7 +4,19 @@
       <b-col cols="8">
         <div>
           <h3>List of movies</h3>
-          {{ movies }}
+          <div v-for="movie in movies" :key="movie.id">
+            <b-card :title="movie.title" :img-src="movie.imageUrl" img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
+              <p class="card-text">
+                <ul>
+                  <li>Director: {{ movie.director }}</li>
+                  <li>Genre: {{ movie.genre }}</li>
+                  <li>Duration: {{ movie.duration }}</li>
+                  <li>Release date: {{ movie.releaseDate }}</li>
+                </ul>
+              </p>
+              <b-button href="#" variant="primary">Go somewhere</b-button>
+            </b-card>
+          </div>
         </div>
       </b-col>
       <b-col cols="4">
@@ -45,10 +57,13 @@
 
 <script>
 import Movies from "../services/Movies"
+import MovieRow from "../components/MovieRow"
 
 export default {
   name: "AppMovies",
-  components: {},
+  components: {
+    MovieRow
+  },
   data() {
     return {
       movies: [],
