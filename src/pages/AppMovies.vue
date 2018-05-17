@@ -5,21 +5,14 @@
         <div>
           <h3>List of movies</h3>
           <movie-search @search-term-updated="onSearchTermUpdate" />
+          <div>
+            <p>Movies selected: {{ numberOfSelectedMovies }}</p>
+          </div>
           <div v-if="isSearchResultEmpty">
             <p>No movies foud.</p>
           </div>
           <div v-for="movie in filteredMovies" :key="movie.id">
-            <b-card :title="movie.title" :img-src="movie.imageUrl" img-alt="Image" img-top tag="article" style="max-width: 20rem;" class="mb-2">
-              <p class="card-text">
-                <ul>
-                  <li>Director: {{ movie.director }}</li>
-                  <li>Genre: {{ movie.genre }}</li>
-                  <li>Duration: {{ movie.duration }}</li>
-                  <li>Release date: {{ movie.releaseDate }}</li>
-                </ul>
-              </p>
-              <b-button href="#" variant="primary">Go somewhere</b-button>
-            </b-card>
+            <movie-row :movie="movie" @movie-selected="onMovieSelected" :selected-movies-ids="selectedMoviesIds" @movie-deselected="onMovieDeselected" />
           </div>
         </div>
       </b-col>
@@ -74,6 +67,7 @@ export default {
     return {
       movies: [],
       filteredMovies: [],
+      selectedMoviesIds: [],
       movieForm: {
         title: "",
         director: "",
@@ -106,6 +100,14 @@ export default {
         return
       }
       this.filteredMovies = this.movies
+    },
+    onMovieSelected(id) {
+      this.selectedMoviesIds.push(id)
+      console.log(this.selectedMoviesIds)
+    },
+    onMovieDeselected(id) {
+      this.selectedMoviesIds.splice(this.selectedMoviesIds.indexOf(id), 1)
+      console.log(this.selectedMoviesIds)
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -119,6 +121,9 @@ export default {
   computed: {
     isSearchResultEmpty() {
       return !this.filteredMovies.length
+    },
+    numberOfSelectedMovies() {
+      return this.selectedMoviesIds.length
     }
   }
 }
