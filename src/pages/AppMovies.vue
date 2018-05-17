@@ -12,11 +12,19 @@
             <b-button variant="primary" @click="selectAllMovies">Select all</b-button>
             <b-button variant="primary" @click="deselectAllMovies">Deselect all</b-button>
           </div>
-          <div v-if="isSearchResultEmpty">
-            <p>No movies foud.</p>
+          <div>
+            <b-button variant="primary" @click="sortMovies('title', 'asc')">Sort by name asc</b-button>
+            <b-button variant="primary" @click="sortMovies('title', 'desc')">Sort by name desc</b-button>
+            <b-button variant="primary" @click="sortMovies('date', 'asc')">Sort by date asc</b-button>
+            <b-button variant="primary" @click="sortMovies('date', 'desc')">Sort by date desc</b-button>
           </div>
-          <div v-for="movie in filteredMovies" :key="movie.id">
-            <movie-row :movie="movie" @movie-selected="onMovieSelected" :selected-movies-ids="selectedMoviesIds" @movie-deselected="onMovieDeselected" />
+          <div class="container mt-4">
+            <div v-if="isSearchResultEmpty">
+              <p>No movies foud.</p>
+            </div>
+            <div v-for="movie in filteredMovies" :key="movie.id">
+              <movie-row :movie="movie" @movie-selected="onMovieSelected" :selected-movies-ids="selectedMoviesIds" @movie-deselected="onMovieDeselected" />
+            </div>
           </div>
         </div>
       </b-col>
@@ -118,6 +126,37 @@ export default {
     },
     deselectAllMovies() {
       this.selectedMoviesIds = []
+    },
+    sortMovies(by, direction) {
+      if (by === "title") {
+        if (direction === "asc") {
+          this.filteredMovies.sort((a, b) => {
+            let titleA = a.title.toLowerCase()
+            let titleB = b.title.toLowerCase()
+            if (titleA < titleB) return -1
+            if (titleA > titleB) return 1
+            if (titleA === titleB) return 0
+          })
+        } else {
+          this.filteredMovies.sort((a, b) => {
+            let titleA = a.title.toLowerCase()
+            let titleB = b.title.toLowerCase()
+            if (titleA > titleB) return -1
+            if (titleA < titleB) return 1
+            if (titleA === titleB) return 0
+          })
+        }
+      } else {
+        if (direction === "asc") {
+          this.filteredMovies.sort((a, b) => {
+            return a.releaseDate - b.releaseDate
+          })
+        } else {
+          this.filteredMovies.sort((a, b) => {
+            return b.releaseDate - a.releaseDate
+          })
+        }
+      }
     }
   },
   beforeRouteEnter(to, from, next) {
